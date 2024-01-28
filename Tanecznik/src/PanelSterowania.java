@@ -1,12 +1,14 @@
 import javax.swing.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 
 public class PanelSterowania extends JFrame{
     private JButton hamulecButton;
     private JButton OnButton;
     private JButton gazButton;
-    private JButton biegButton;
+    private JButton biegWyzejButton;
     private JLabel predkoscLabel;
     private JButton Offbutton;
     private JLabel obrotyLabel;
@@ -15,23 +17,28 @@ public class PanelSterowania extends JFrame{
     private JLabel olejLabel;
     private javax.swing.JPanel JPanel;
     private JButton stacjaButton;
+    private JButton biegNizejButton;
 
 
     public static void main(String[] args)
     {
         PanelSterowania PanelSterowania = new PanelSterowania();
         PanelSterowania.setVisible(true);
+        BazaDanych.pobierzStanPaliwa();
+        BazaDanych.pobierzStanOleju();
     }
 
     public void Parametry()
     {
-        predkoscLabel.setText("Prędkość: " + samochod.getPredkosc());
+        predkoscLabel.setText("Prędkość: " + samochod.getPredkosc() + " km/h");
         obrotyLabel.setText("Obroty silnika:" + samochod.getObrotySilnika());
-        paliwoLabel.setText("Ilość paliwa: "+ samochod.getBak());
-        olejLabel.setText("Ilość oleju:" + samochod.getOlej());
+        paliwoLabel.setText("Ilość paliwa: "+ samochod.getBak() + " l");
+        olejLabel.setText("Ilość oleju: " + samochod.getOlej() + " %");
+        biegLabel.setText("Bieg: " + samochod.getBieg());
     }
 
     private Samochod samochod = new Samochod();
+
 
     public PanelSterowania()
     {
@@ -40,6 +47,9 @@ public class PanelSterowania extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         int width = 600, height = 400;
         this.setSize(width, height);
+
+       
+
 
         OnButton.addActionListener(new ActionListener() {
             @Override
@@ -73,11 +83,34 @@ public class PanelSterowania extends JFrame{
             }
         });
 
-        biegButton.addActionListener(new ActionListener() {
+
+        biegWyzejButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                samochod.zmienBieg(3);
+                samochod.biegWyzej();
+                Parametry();
+            }
+        });
+        biegNizejButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                samochod.biegNizej();
+                Parametry();
+            }
+        });
+        stacjaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                samochod.zapiszStan();
+                Stacja Stacja = new Stacja();
+                Stacja.setVisible(true);
+                dispose();
+
             }
         });
     }
-}
+
+
+
+    }

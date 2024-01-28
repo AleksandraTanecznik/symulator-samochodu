@@ -1,106 +1,80 @@
 public class Samochod {
-    private boolean silnikDziala = false;
-    private int bieg = 0;
-    private int predkosc = 0;
-    private int obrotySilnika = 0;
-    private int IloscWBaku = 55; // Maksymalna pojemność baku w litrach
-    private int olejProcenty = 100; // Poziom oleju silnikowego w procentach
+    private Silnik silnik;
+    private SkrzyniaBiegow skrzyniaBiegow;
+    private Paliwo paliwo;
+    private Olej olej;
+    private int predkosc;
 
-    public int getBieg()
-    {
-        return bieg;
+    public Samochod() {
+        silnik = new Silnik();
+        skrzyniaBiegow = new SkrzyniaBiegow();
+        paliwo = new Paliwo();
+        olej = new Olej();
+        silnik.getPredkosc();
     }
 
-    public int getPredkosc()
-    {
-        return predkosc;
-    }
+    public int getPredkosc(){return silnik.getPredkosc();}
+    public int getObrotySilnika(){return silnik.getObrotySilnika();}
+    public int getBak(){return paliwo.getBak();}
+    public int getOlej(){return olej.getOlej();}
+    public int getBieg(){return  skrzyniaBiegow.getBieg();}
 
-    public int getObrotySilnika()
-    {
-        return obrotySilnika;
-    }
+    public void odpalSamochod() { silnik.odpalSamochod();}
 
-    public int getBak()
-    {
-        return IloscWBaku;
-    }
+    public void zgasSamochod() { silnik.zgasSamochod();}
 
-    public int getOlej()
-    {
-        return olejProcenty;
-    }
-
-    public void odpalSamochod()
-    {
-        if (!silnikDziala)
-        {
-            System.out.println("Samochód został odpalony. Silnik działa.");
-            silnikDziala = true;
-        }
-        else
-        {
-            System.out.println("Samochód już chodzi.");
-        }
-
-    }
-
-    public void zgasSamochod()
-    {
-        if(predkosc>0)
-        {
-            System.out.println("Nie można zgasić samochodu w trakcie jazdy");
-        }
-        else
-        {
-            if (silnikDziala)
-            {
-                System.out.println("Silnik został wyłączony. Samochód zgaszony");
-                silnikDziala = false;
-            }
-            else
-            {
-                System.out.println("Samochód jest już zgaszony.");
-            }
-        }
-    }
-
-    public void zmienBieg(int nowyBieg)
-    {
-        if (silnikDziala)
-        {
-            if (nowyBieg>5)
-            {
-                System.out.println("Nie ma takiego biegu");
-            }
-            else
-            {
-                bieg = nowyBieg;
-                System.out.println("Bieg zmieniony na " + nowyBieg + ".");
-            }
-        }
-        else
-        {
-            System.out.println("Najpierw odpal samochód.");
-        }
-    }
 
     public void przyspiesz()
     {
-        if (silnikDziala)
+        silnik.przyspiesz();
+        if(silnik.getCzyDziala())
         {
-            if (IloscWBaku > 0 && olejProcenty > 0)
+            if(skrzyniaBiegow.getBieg()!=0)
             {
-                predkosc += 10;
-                obrotySilnika += 250;
-                IloscWBaku--;
-                olejProcenty--;
-                System.out.println("Przyspieszono. Szybkość: " + predkosc + " km/h, Obroty silnika: " + obrotySilnika + ".");
+                if (getBak() > 0 && getOlej() > 0 )
+                {
+                    if(getPredkosc()>=150)
+                    {
+                        System.out.println("Nie można bardziej przyspieszyć");
+                    }
+                    else
+                    {
+                        silnik.setPredkosc(10);
+                        silnik.setObrotySilnika(250);
+                        paliwo.setIloscWBaku(1);
+                        olej.setOlejProcenty(1);
+                        System.out.println("Przyspieszono. Szybkość: " + getPredkosc() + " km/h, Obroty silnika: " + getObrotySilnika() + ".");
+                    }
+                }
+                else
+                {
+                    System.out.println("Brak paliwa lub oleju. Nie można przyspieszyć.");
+                }
             }
             else
             {
-                System.out.println("Brak paliwa lub oleju. Nie można przyspieszyć.");
+                System.out.println("Nie moża przyspieszyć na biegu 0. Zmień bieg na wyższy");
             }
+        }
+    }
+    public void hamuj() { silnik.hamuj();}
+
+    public void biegWyzej()
+    {
+        if (silnik.getCzyDziala())
+        {
+            skrzyniaBiegow.biegWyzej();
+        }
+        else
+        {
+            System.out.println("Najpierw odpal samochów.");
+        }
+    }
+    public void biegNizej()
+    {
+        if (silnik.getCzyDziala())
+        {
+            skrzyniaBiegow.biegNizej();
         }
         else
         {
@@ -108,46 +82,39 @@ public class Samochod {
         }
     }
 
-    public void hamuj()
-    {
-        if (silnikDziala)
-        {
-            if (predkosc > 0)
-            {
-                predkosc -= 5;
-                obrotySilnika -= 125;
-                olejProcenty--;
-                System.out.println("Hamowanie. Szybkość: " + predkosc + " km/h, Obroty silnika: " + obrotySilnika + ".");
-                if (predkosc ==0)
-                {
-                    System.out.println("Samochód stoi.");
-                }
-            }
-            else
-            {
-                System.out.println("Samochód stoi.");
-            }
-        } else {
-            System.out.println("Najpierw odpal samochód.");
-        }
-    }
+    public void zapiszStan() {
+        BazaDanych.zapiszStan(getBak(), getOlej());
+}
 
-    public void wyswietlParametry() {
-        System.out.println("Szybkość: " + predkosc + " km/h, Bieg: " + bieg + ", Obroty silnika: " + obrotySilnika + ".");
-        System.out.println("Bak: " + IloscWBaku + " l, Olej silnikowy: " + olejProcenty + "%.");
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    public void wyswietlParametry() {
+//        System.out.println("Szybkość: " + predkosc + " km/h, Bieg: " + bieg + ", Obroty silnika: " + obrotySilnika + ".");
+//        System.out.println("Bak: " + IloscWBaku + " l, Olej silnikowy: " + olejProcenty + "%.");
+//    }
 
     public static void main(String[] args) {
         Samochod samochod = new Samochod();
 
-        samochod.odpalSamochod();
-        samochod.zmienBieg(1);
-        samochod.przyspiesz();
-        samochod.hamuj();
-        samochod.wyswietlParametry();
 
-        samochod.zmienBieg(7);
-
-        samochod.zgasSamochod();
     }
 }
